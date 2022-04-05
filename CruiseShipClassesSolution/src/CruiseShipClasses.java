@@ -1,11 +1,12 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CruiseShipClasses {
 
-    static boolean isTrue = true;
+    static boolean isTrue = true; // Condition checker for mainMenu() while loop
 
     public static void main(String[] args) {
         Cabin[] cabins = new Cabin[12];
@@ -19,6 +20,7 @@ public class CruiseShipClasses {
         System.out.println("==========================================");
         System.out.println("                Main Menu                ");
         System.out.println("==========================================");
+        System.out.println("------------------------------------------");
         System.out.println(" A: Add Passenger to Cabin");
         System.out.println(" V: View All Cabins");
         System.out.println(" T: Get Expenses");
@@ -73,7 +75,7 @@ public class CruiseShipClasses {
                 break;
             case "q":
             case "Q":
-                isTrue = false;
+                isTrue = false; // breaks the while loop mainMenu() is in and exits the program.
                 break;
             default:
                 System.out.println("Wrong input. Please try again!");
@@ -85,42 +87,60 @@ public class CruiseShipClasses {
     public static void addPassengerToCabin(Cabin[] cabins) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter cabin number: ");
-        int cabinNum = scanner.nextInt();
-
-        if (cabins[cabinNum - 1] == null) {
-            cabins[cabinNum - 1] = new Cabin(cabinNum, "Cabin " + cabinNum);
-        }
-
-        if (((cabins[cabinNum - 1].passengers[0] != null) && (cabins[cabinNum - 1].passengers[1] != null)) && (cabins[cabinNum - 1].passengers[2] != null)) {
-            System.out.println("Cabin " + cabinNum + " is full. Please select another cabin and try again.");
-            return;
-        }
-
+        System.out.println("------------------------------------------");
         System.out.print("Enter first name: ");
         String firstName = scanner.next();
         System.out.print("Enter surname: ");
         String surName = scanner.next();
-        System.out.print("Enter expenses: $");
-        double expenses = scanner.nextDouble();
+        double expenses;
 
-        for (int i = 0; i < 3; i++) {
-            if (cabins[cabinNum - 1].passengers[i] == null) {
-                //System.out.println(cabins[cabinNum - 1].passengers[0]);
-                cabins[cabinNum - 1].passengers[i] = new Passenger(firstName, surName, expenses);
-                System.out.println("Added " + firstName + " to cabin " + cabinNum + " slot " + (i + 1) + ".");
-                break;
-            } else {
-                System.out.println("Cabin " + cabinNum + " slot " + (i + 1) + " is full. Trying next one...");
-            }
+        try {
+            System.out.print("Enter expenses: $");
+            expenses = scanner.nextDouble();
+        } catch (InputMismatchException e){
+            System.out.println("Wrong input! You have to enter a double value.");
+            System.out.println("Returning to main menu...");
+            return;
         }
 
-        //System.out.println(Arrays.toString(cabins[cabinNum-1].passengers));
-        //System.out.println(Arrays.toString(cabins));
+        System.out.println("------------------------------------------");
+        System.out.print("Enter cabin number (or \"13\" to go back.): ");
+        int cabinNum;
+        try {
+            cabinNum = scanner.nextInt();
+        } catch (InputMismatchException e){
+            System.out.println("Wrong input! Try again.");
+            System.out.println("Returning to main menu...");
+            return;
+        }
+
+        if (cabinNum < 13) {
+            if (cabins[cabinNum - 1] == null) {
+                cabins[cabinNum - 1] = new Cabin(cabinNum, "Cabin " + cabinNum);
+            }
+            for (int i = 0; i < 3; i++) {
+                if (cabins[cabinNum - 1].passengers[i] == null) {
+                    cabins[cabinNum - 1].passengers[i] = new Passenger(firstName, surName, expenses);
+                    System.out.println("Added " + firstName + " to cabin " + cabinNum + " slot " + (i + 1) + ".");
+                    return;
+
+                } else {
+                    System.out.println("Cabin " + cabinNum + " slot " + (i + 1) + " is full. Trying next one...");
+                }
+            }
+            System.out.println("Cabin " + cabinNum + " is full. Select another cabin and try again.");
+        } else if (cabinNum == 13) {
+            System.out.println("Going back to main menu...");
+        } else {
+            System.out.println("Wrong input! Try again.");
+            System.out.println("Returning to main menu...");
+        }
     }
 
     public static void viewAllCabins(Cabin[] cabins) {
-        //System.out.println(Arrays.toString(cabins));
+
+        System.out.println("------------------------------------------");
+        System.out.println("--------------View All Cabins-------------");
 
         for (int i = 0; i < cabins.length; i++) {
             if (cabins[i] == null) {
@@ -136,6 +156,8 @@ public class CruiseShipClasses {
                 }
             }
         }
+        System.out.println("------------------------------------------");
+        System.out.println("Returning to main menu...");
     }
 
     public static void getExpenses(Cabin[] cabins){
@@ -150,6 +172,7 @@ public class CruiseShipClasses {
         switch (subOption){
             case "p":
             case "P":
+                System.out.println("----------------------");
                 System.out.println("Expenses per passenger");
                 System.out.println("----------------------");
                 for (int i = 0; i < cabins.length; i++) {
@@ -163,6 +186,7 @@ public class CruiseShipClasses {
                     }
                 }
                 System.out.println("----------------------");
+                System.out.println("Returning to main menu...");
                 break;
             case "t":
             case "T":
@@ -177,7 +201,10 @@ public class CruiseShipClasses {
                         }
                     }
                 }
-                System.out.println("Total Expenses of all passengers: $" + totalExpenses);
+                System.out.println("------------------------------------------");
+                System.out.println(" Total Expenses of all passengers: $" + totalExpenses);
+                System.out.println("------------------------------------------");
+                System.out.println("Returning to main menu...");
                 break;
             default:
                 System.out.println("Wrong Input. Try again!");
@@ -187,39 +214,69 @@ public class CruiseShipClasses {
     }
 
     public static void displayEmptyCabins(Cabin[] cabins){
+        System.out.println("------------------------------------------");
         System.out.println("Empty Cabins: ");
         for (int i = 0; i < cabins.length; i++) {
             if (cabins[i] == null) {
                 System.out.println("\tCabin " + (i + 1));
             }
         }
+        System.out.println("------------------------------------------");
         System.out.println();
     }
 
     public static void deletePassengerFromCabin(Cabin[] cabins){
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter cabin number: ");
-        int cabinNum = input.nextInt();
-        System.out.print("Enter slot number: ");
-        int slotNum = input.nextInt();
+        System.out.println("------------------------------------------");
 
-        if (cabins[cabinNum - 1] != null) {
-            if (cabins[cabinNum - 1].passengers[slotNum - 1] != null) {
-                System.out.println("Removed " + cabins[cabinNum -1].passengers[slotNum-1].getFirstName() + " from " + cabins[cabinNum-1].getCabinName() + ".");
-                cabins[cabinNum -1].passengers[slotNum-1] = null;
+        int cabinNum;
+        int slotNum;
 
-                if (Arrays.toString(cabins[cabinNum - 1].passengers).equals("[null, null, null]")){
-                    cabins[cabinNum-1] = null;
+        try {
+            Scanner input = new Scanner(System.in);
+            System.out.print("Enter cabin number: ");
+            cabinNum = input.nextInt();
+            System.out.print("Enter slot number: ");
+            slotNum = input.nextInt();
+        } catch (InputMismatchException e){
+            System.out.println("Wrong inputs! Try again.");
+            System.out.println("Returning to main menu...");
+            return;
+        }
+        System.out.println("------------------------------------------");
+
+        if (cabinNum > 0 && cabinNum < 13) {
+            if (slotNum > 0 && slotNum < 4) {
+                if (cabins[cabinNum - 1] != null) {
+                    if (cabins[cabinNum - 1] != null) {
+                        if (cabins[cabinNum - 1].passengers[slotNum - 1] != null) {
+                            System.out.println("Removed " + cabins[cabinNum - 1].passengers[slotNum - 1].getFirstName() + " from " + cabins[cabinNum - 1].getCabinName() + ".");
+                            cabins[cabinNum - 1].passengers[slotNum - 1] = null;
+
+                            if (Arrays.toString(cabins[cabinNum - 1].passengers).equals("[null, null, null]")) {
+                                cabins[cabinNum - 1] = null;
+                            }
+                        } else {
+                            System.out.println("Cabin " + cabinNum + " slot " + slotNum + " is already empty.");
+                        }
+                    } else {
+                        System.out.println("Cabin " + cabinNum + " is already empty.");
+                    }
                 }
             } else {
-                System.out.println("Cabin " + cabinNum + " slot " + slotNum + " is already empty.");
+                System.out.println("Enter slot 1, 2, or 3.");
+                System.out.println("Returning to main menu...");
+                return;
             }
         } else {
-            System.out.println("Cabin " + cabinNum + " is already empty.");
+            System.out.println("Enter a cabin number between 1-12.");
+            System.out.println("Returning to main menu...");
+            return;
         }
+        System.out.println("------------------------------------------");
     }
 
     public static void findCabinFromName(Cabin[] cabins){
+        System.out.println("------------------------------------------");
         boolean isThere = false;
         Scanner input = new Scanner(System.in);
         System.out.print("Enter passenger's first name: ");
@@ -241,6 +298,7 @@ public class CruiseShipClasses {
         if (!isThere){
             System.out.println("No passenger by that name.");
         }
+        System.out.println("------------------------------------------");
     }
 
     public static void saveDataToFile(Cabin[] cabins) {
@@ -249,9 +307,9 @@ public class CruiseShipClasses {
             for (int i=0; i<cabins.length;i++){
                 oos.writeObject(cabins[i]);
             }
-
-            System.out.println("---------------------");
-            System.out.println("Saved data to a file.");
+            System.out.println("------------------------------------------");
+            System.out.println("Cruise Ship Cabin data was successfully saved.");
+            System.out.println("------------------------------------------");
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -266,13 +324,14 @@ public class CruiseShipClasses {
             for (int i=0; i<cabins.length;i++){
                 cabins[i] = (Cabin) objectIn.readObject();
             }
-
-            System.out.println("-------------------------------");
-            System.out.println("Loaded data back from the file.");
             objectIn.close();
+            System.out.println("------------------------------------------");
+            System.out.println("The data has been successfully loaded from the data file.");
+            System.out.println("------------------------------------------");
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("Error loading file! Check for missing file and try again.");
+            //ex.printStackTrace();
         }
 
     }
@@ -292,7 +351,15 @@ public class CruiseShipClasses {
         for (int i = 0; i < tempPassengers.size(); i++) {
             for (int j = i+1; j <tempPassengers.size(); j++) {
                 int compare = tempPassengers.get(i).compareTo(tempPassengers.get(j));
-                if(compare > 0) {      //swaps elements if not in order
+
+                /*
+                compares 2 strings lexicographically.
+                  0 if the string is equal to the other string.
+                  < 0 if the string is lexicographically less than the other string.
+                  > 0 if the string is lexicographically greater than the other string.
+                */
+
+                if(compare > 0) {      //swaps passengers in temporary array, if they are not in order
                     String temp = tempPassengers.get(i);
                     tempPassengers.set(i, tempPassengers.get(j));
                     tempPassengers.set(j, temp);
@@ -300,8 +367,12 @@ public class CruiseShipClasses {
             }
         }
 
+        System.out.println("------------------------------------------");
+        System.out.println("----Passengers Ordered Alphabetically-----");
+
         for (String tempPassenger : tempPassengers) {
             System.out.println(tempPassenger);
         }
+        System.out.println("------------------------------------------");
     }
 }
