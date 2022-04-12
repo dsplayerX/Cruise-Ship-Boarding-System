@@ -21,7 +21,7 @@ public class CruiseShipClassesWithQueue {
          *    until user inputs "q" or "Q" to exit the program.
          */
         while (isTrue) {
-            mainMenu(cabins);
+            mainMenu(cabins, waitingListQueue);
         }
     }
 
@@ -33,8 +33,9 @@ public class CruiseShipClassesWithQueue {
      * additional options are there for the easy manipulation of the program.
      *   > examples: filling all cabins to test waiting queue
      *               clear all cabins without restarting the program
+     *               displaying the current queue
      */
-    public static void mainMenu(Cabin[] cabinsRef) {
+    public static void mainMenu(Cabin[] cabinsRef, Passenger[] waitingQueue) {
         System.out.println("==========================================");
         System.out.println("                Main Menu                 ");
         System.out.println("==========================================");
@@ -50,6 +51,7 @@ public class CruiseShipClassesWithQueue {
         System.out.println(" O: View Passengers Ordered Alphabetically");
         System.out.println(" Q: Quit");
         System.out.println("--------------|additional|----------------");
+        System.out.println(" B: Display waiting list queue");
         System.out.println(" M: Fill all cabins");
         System.out.println(" N: Empty all cabins");
         System.out.println("------------------------------------------");
@@ -94,6 +96,10 @@ public class CruiseShipClassesWithQueue {
             case "O":
                 passengersOrdered(cabinsRef);
                 break;
+            case "b":
+            case "B":
+                displayQueue(waitingQueue);
+                break;
             case "m":
             case "M":
                 fillAllCabins(cabinsRef);
@@ -109,7 +115,7 @@ public class CruiseShipClassesWithQueue {
                 break;
             default:
                 System.out.println("Wrong input. Please try again!");
-                mainMenu(cabinsRef); // call back to mainMenu()
+                mainMenu(cabinsRef, waitingQueue); // call back to mainMenu()
                 break;
         }
     }
@@ -341,28 +347,23 @@ public class CruiseShipClassesWithQueue {
                         System.out.println("Removed " + cabins[cabinNum -1].passengers[slotNum-1].getFirstName() + " from " + cabins[cabinNum-1].getCabinName() + ".");
                         cabins[cabinNum -1].passengers[slotNum-1] = null;
 
-
+                        //deQueue
+                        //// adding passengers from queue to the empty slot in cabin
+                        if (front == -1 && rear == -1) {
+                            System.out.println("The queue is empty. No passenger was added.");
+                        } else {
+                            cabins[cabinNum - 1].passengers[slotNum - 1] = waitingListQueue[front];
+                            System.out.println("Added passenger " + cabins[cabinNum - 1].passengers[slotNum - 1].getFirstName() + " to cabin from waiting list.");
+                            if (front == rear) {
+                                front = rear = -1;
+                            } else {
+                                front = (front + 1) % 5;
+                            }
+                        }
 
                         if (Arrays.toString(cabins[cabinNum - 1].passengers).equals("[null, null, null]")){
                             cabins[cabinNum-1] = null;
                             System.out.println("All passengers are cleared. The cabin is empty.");
-
-                            //deQueue
-                            if (front == -1 && rear == -1) {
-                                System.out.println("The queue is empty. No passenger was added.");
-                            } else {
-                                cabins[cabinNum - 1] = new Cabin(cabinNum, "Cabin " + cabinNum);
-                                for (int k = 0; k < 3; k++){
-                                    cabins[cabinNum - 1].passengers[slotNum - 1] = waitingListQueue[front];
-                                    System.out.println("Added passenger " + cabins[cabinNum - 1].passengers[slotNum - 1].getFirstName() + " to cabin from waiting list.");
-                                    if (front == rear) {
-                                        front = rear = -1;
-                                    } else {
-                                        front = (front + 1) % 5;
-                                    }
-                                }
-
-                            }
                         }
                     }
                 }
@@ -498,13 +499,29 @@ public class CruiseShipClassesWithQueue {
         System.out.println("------------------------------------------");
     }
 
+    // method to view the passenger waiting list queue
+    public static void displayQueue(Passenger [] waitingQueue){
+        int i = front;
+        if (front == -1 && rear == -1){
+            System.out.println("Waiting list is empty!");
+        } else {
+            System.out.print("Waiting list is: ");
+            while (i != rear){
+                System.out.print(waitingQueue[i].getFirstName() + " "+ waitingQueue[i].getSurName() + ", ");
+                i = (i+1)%5;
+            }
+            System.out.print(waitingQueue[rear].getFirstName() + " "+ waitingQueue[rear].getSurName() + ".");
+        }
+        System.out.println();
+    }
+
     // method to fill all the cabins for easier demonstration of waiting queue.
     public static void fillAllCabins(Cabin[] cabins){
         System.out.println("------------------------------------------");
         System.out.println("Filled all cabins with \"John Doe\"s.");
 
         for (int i = 0; i < cabins.length; i++) {
-            cabins[i] = new Cabin(i, "Cabin " + i);
+            cabins[i] = new Cabin(i, "Cabin " + (i+1));
             for (int j = 0; j < cabins[i].passengers.length; j++) {
                 cabins[i].passengers[j] = new Passenger("John", "Doe", 420);
             }

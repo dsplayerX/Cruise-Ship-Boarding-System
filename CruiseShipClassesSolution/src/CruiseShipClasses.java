@@ -9,13 +9,22 @@ public class CruiseShipClasses {
     static boolean isTrue = true; // Condition checker for mainMenu() while loop
 
     public static void main(String[] args) {
-        Cabin[] cabins = new Cabin[12];
+        Cabin[] cabins = new Cabin[12]; // Cabins object array to store cabin + passenger data
 
+        /*
+         * loops back to mainMenu() after each method
+         *    until user inputs "q" or "Q" to exit the program.
+         */
         while (isTrue) {
             mainMenu(cabins);
         }
     }
 
+    /*
+     * Main menu with a switch case that call different methods.
+     * Defaults back to main menu.
+     * "Q"/"q" exits the program
+     */
     public static void mainMenu(Cabin[] cabinsRef) {
         System.out.println("==========================================");
         System.out.println("                Main Menu                ");
@@ -79,15 +88,18 @@ public class CruiseShipClasses {
                 break;
             default:
                 System.out.println("Wrong input. Please try again!");
-                mainMenu(cabinsRef);
+                mainMenu(cabinsRef); // call back to mainMenu()
                 break;
         }
     }
 
+    // Takes cabin number and assign a passenger to it.
     public static void addPassengerToCabin(Cabin[] cabins) {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("------------------------------------------");
+        System.out.println("--------Add a Passenger to a Cabin--------");
+
+        // getting user input for passenger details
         System.out.print("Enter first name: ");
         String firstName = scanner.next();
         System.out.print("Enter surname: ");
@@ -129,6 +141,7 @@ public class CruiseShipClasses {
                 }
             }
             System.out.println("Cabin " + cabinNum + " is full. Select another cabin and try again.");
+            displayEmptyCabins(cabins); // runs method to display empty cabins user can add passengers to
         } else if (cabinNum == 13) {
             System.out.println("Going back to main menu...");
         } else {
@@ -137,6 +150,7 @@ public class CruiseShipClasses {
         }
     }
 
+    // Prints whether cabins are occupied or empty.
     public static void viewAllCabins(Cabin[] cabins) {
 
         System.out.println("------------------------------------------");
@@ -160,8 +174,10 @@ public class CruiseShipClasses {
         System.out.println("Returning to main menu...");
     }
 
+    // Gives user the option to print expenses per passenger or the total expenses.
     public static void getExpenses(Cabin[] cabins){
         System.out.println("---------------------------------------------");
+        System.out.println("----------------Get Expenses-----------------");
         System.out.println("P: Print Expenses per passenger");
         System.out.println("T: Print the Total Expenses of all passengers");
         System.out.println("---------------------------------------------");
@@ -172,30 +188,36 @@ public class CruiseShipClasses {
         switch (subOption){
             case "p":
             case "P":
-                System.out.println("----------------------");
-                System.out.println("Expenses per passenger");
-                System.out.println("----------------------");
-                for (int i = 0; i < cabins.length; i++) {
-                    if (cabins[i] != null) {
-                        System.out.println(cabins[i].getCabinName() + ": ");
-                        for (int j = 0; j < cabins[i].passengers.length; j++) {
-                            if (cabins[i].passengers[j] != null) {
-                                System.out.println("\t" + cabins[i].passengers[j].getFirstName() + " " + cabins[i].passengers[j].getSurName() + ": $" + cabins[i].passengers[j].getExpenses());
+                System.out.println("------------------------------------------");
+                System.out.println("----------Expenses per passenger----------");
+
+                boolean isThereExpenses = false; // checks whether there are passengers with expenses.
+
+                for (Cabin cabin : cabins) {
+                    if (cabin != null) {
+                        System.out.println(cabin.getCabinName() + ": ");
+                        for (int j = 0; j < cabin.passengers.length; j++) {
+                            if (cabin.passengers[j] != null) {
+                                System.out.println("\t" + cabin.passengers[j].getFirstName() + " " + cabin.passengers[j].getSurName() + ": $" + cabin.passengers[j].getExpenses());
+                                isThereExpenses = true;
                             }
                         }
                     }
                 }
-                System.out.println("----------------------");
+                if (!isThereExpenses) { // if there aren't any passengers lets the user know
+                    System.out.println("There are no passengers in the ship.");
+                }
+                System.out.println("------------------------------------------");
                 System.out.println("Returning to main menu...");
                 break;
             case "t":
             case "T":
                 double totalExpenses = 0;
-                for (int i = 0; i < cabins.length; i++) {
-                    if (cabins[i] != null) {
-                        for (int j = 0; j < cabins[i].passengers.length; j++) {
-                            if (cabins[i].passengers[j] != null) {
-                                double tempExpenses = cabins[i].passengers[j].getExpenses();
+                for (Cabin cabin : cabins) {
+                    if (cabin != null) {
+                        for (int j = 0; j < cabin.passengers.length; j++) {
+                            if (cabin.passengers[j] != null) {
+                                double tempExpenses = cabin.passengers[j].getExpenses();
                                 totalExpenses += tempExpenses;
                             }
                         }
@@ -213,8 +235,10 @@ public class CruiseShipClasses {
         }
     }
 
+    // Displays empty cabins
     public static void displayEmptyCabins(Cabin[] cabins){
         System.out.println("------------------------------------------");
+        System.out.println("-----------Display Empty Cabins-----------");
         System.out.println("Empty Cabins: ");
         for (int i = 0; i < cabins.length; i++) {
             if (cabins[i] == null) {
@@ -225,6 +249,7 @@ public class CruiseShipClasses {
         System.out.println();
     }
 
+    // Takes in cabin number and slot number and removes passenger from it, if any.
     public static void deletePassengerFromCabin(Cabin[] cabins){
         System.out.println("------------------------------------------");
 
@@ -275,6 +300,7 @@ public class CruiseShipClasses {
         System.out.println("------------------------------------------");
     }
 
+    // Takes in passenger's first name and surname and displays the cabin occupied
     public static void findCabinFromName(Cabin[] cabins){
         System.out.println("------------------------------------------");
         boolean isThere = false;
@@ -283,12 +309,12 @@ public class CruiseShipClasses {
         String inputFirstName = input.next();
         System.out.print("Enter passenger's last name: ");
         String inputSurName = input.next();
-        for (int i = 0; i < cabins.length; i++) {
-            if (cabins[i] != null) {
-                for (int j = 0; j < cabins[i].passengers.length; j++) {
-                    if (cabins[i].passengers[j] != null) {
-                        if ((cabins[i].passengers[j].getFirstName().equals(inputFirstName)) && (cabins[i].passengers[j].getSurName().equals(inputSurName))){
-                            System.out.println(cabins[i].passengers[j].getFirstName() + " " + cabins[i].passengers[j].getSurName() + " is in " + cabins[i].getCabinName() + ".");
+        for (Cabin cabin : cabins) {
+            if (cabin != null) {
+                for (int j = 0; j < cabin.passengers.length; j++) {
+                    if (cabin.passengers[j] != null) {
+                        if ((cabin.passengers[j].getFirstName().equals(inputFirstName)) && (cabin.passengers[j].getSurName().equals(inputSurName))) {
+                            System.out.println(cabin.passengers[j].getFirstName() + " " + cabin.passengers[j].getSurName() + " is in " + cabin.getCabinName() + ".");
                             isThere = true;
                         }
                     }
@@ -301,11 +327,12 @@ public class CruiseShipClasses {
         System.out.println("------------------------------------------");
     }
 
+    // Saves cabin object data in to file.
     public static void saveDataToFile(Cabin[] cabins) {
         try (FileOutputStream fos = new FileOutputStream("CruiseShipClassesData.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            for (int i=0; i<cabins.length;i++){
-                oos.writeObject(cabins[i]);
+            for (Cabin cabin : cabins) {
+                oos.writeObject(cabin);
             }
             System.out.println("------------------------------------------");
             System.out.println("Cruise Ship Cabin data was successfully saved.");
@@ -316,6 +343,7 @@ public class CruiseShipClasses {
         }
     }
 
+    // Loads data from saved data file back to Cabins[] array.
     public static void loadDataFromFile(Cabin[] cabins) {
         try {
             FileInputStream fileIn = new FileInputStream("CruiseShipClassesData.dat");
@@ -336,13 +364,21 @@ public class CruiseShipClasses {
 
     }
 
+    /*
+     * Stores the passed array in a temp array,
+     * Compares 2 adjacent strings,
+     * And swaps them if not in order.
+     *
+     * Reference - comparing 2 strings lexicographically
+     *    > @link https://stackoverflow.com/questions/6203411/comparing-strings-by-their-alphabetical-order
+     */
     public static void passengersOrdered(Cabin[] cabins){
         ArrayList<String> tempPassengers = new ArrayList<>();
-        for (int i = 0; i < cabins.length; i++) {
-            if (cabins[i] != null) {
-                for (int j = 0; j < cabins[i].passengers.length; j++) {
-                    if (cabins[i].passengers[j] != null) {
-                        tempPassengers.add((cabins[i].passengers[j].getFirstName() + " " + cabins[i].passengers[j].getSurName()));
+        for (Cabin cabin : cabins) {
+            if (cabin != null) {
+                for (int j = 0; j < cabin.passengers.length; j++) {
+                    if (cabin.passengers[j] != null) {
+                        tempPassengers.add((cabin.passengers[j].getFirstName() + " " + cabin.passengers[j].getSurName()));
                     }
                 }
             }
@@ -351,14 +387,11 @@ public class CruiseShipClasses {
         for (int i = 0; i < tempPassengers.size(); i++) {
             for (int j = i+1; j <tempPassengers.size(); j++) {
                 int compare = tempPassengers.get(i).compareTo(tempPassengers.get(j));
-
                 /*
-                compares 2 strings lexicographically.
-                  0 if the string is equal to the other string.
-                  < 0 if the string is lexicographically less than the other string.
-                  > 0 if the string is lexicographically greater than the other string.
-                */
-
+                 * 0 if the string is equal to the other string.
+                 * < 0 if the string is lexicographically less than the other.
+                 * > 0 if the string is lexicographically greater than the other.
+                 */
                 if(compare > 0) {      //swaps passengers in temporary array, if they are not in order
                     String temp = tempPassengers.get(i);
                     tempPassengers.set(i, tempPassengers.get(j));
@@ -376,3 +409,4 @@ public class CruiseShipClasses {
         System.out.println("------------------------------------------");
     }
 }
+
