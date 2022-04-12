@@ -105,6 +105,7 @@ public class CruiseShipClassesWithQueue {
             case "q":
             case "Q":
                 isTrue = false; // breaks the while loop mainMenu() is in and exits the program.
+                System.out.println("Quitting...");
                 break;
             default:
                 System.out.println("Wrong input. Please try again!");
@@ -115,6 +116,9 @@ public class CruiseShipClassesWithQueue {
 
     // Takes cabin number and assign a passenger to it.
     public static void addPassengerToCabin(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("--------Add a Passenger to a Cabin--------");
+
         boolean isFull = true; // to check whether all the cabins are full.
         Scanner scanner = new Scanner(System.in);
 
@@ -132,7 +136,8 @@ public class CruiseShipClassesWithQueue {
                 break;
             }
         }
-        System.out.println("------------------------------------------");
+
+        // getting user input for passenger details
         System.out.print("Enter first name: ");
         String firstName = scanner.next();
         System.out.print("Enter surname: ");
@@ -149,18 +154,19 @@ public class CruiseShipClassesWithQueue {
         }
 
         if (isFull) { // adds passenger to queue if all cabins are full
-            System.out.println("Cabins are full. Adding to waiting queue...");
             if (front == -1 && rear == -1){
                 front = rear = 0;
                 waitingListQueue[rear] = new Passenger(firstName, surName, expenses);
+                System.out.println("Cabins are full. Adding " + firstName + " to waiting queue...");
             } else if (((rear+1)%5) == front) {
-                System.out.println("Cannot add. Queue is full.");
+                System.out.println("Cannot add " + firstName + " to waiting list. Queue is full.");
             } else {
                 rear = (rear+1)%5;
                 waitingListQueue[rear] = new Passenger(firstName, surName, expenses);
+                System.out.println("Cabins are full. Adding " + firstName + " to waiting queue...");
             }
         } else { // if there are empty cabins, adds to them / lets the user know there are other empty cabins
-            System.out.print("Enter cabin number (or \"13\" to go back.): ");
+            System.out.print("Enter cabin number (or \"13\" to discard): ");
             int cabinNum;
             try {
                 cabinNum = scanner.nextInt();
@@ -194,7 +200,7 @@ public class CruiseShipClassesWithQueue {
         }
     }
 
-    //Prints whether cabins are occupied or empty.
+    // Prints whether cabins are occupied or empty.
     public static void viewAllCabins(Cabin[] cabins) {
 
         System.out.println("------------------------------------------");
@@ -219,8 +225,10 @@ public class CruiseShipClassesWithQueue {
         System.out.println("Returning to main menu...");
     }
 
+    // Gives user the option to print expenses per passenger or the total expenses.
     public static void getExpenses(Cabin[] cabins){
         System.out.println("---------------------------------------------");
+        System.out.println("----------------Get Expenses-----------------");
         System.out.println("P: Print Expenses per passenger");
         System.out.println("T: Print the Total Expenses of all passengers");
         System.out.println("---------------------------------------------");
@@ -231,30 +239,36 @@ public class CruiseShipClassesWithQueue {
         switch (subOption){
             case "p":
             case "P":
-                System.out.println("----------------------");
-                System.out.println("Expenses per passenger");
-                System.out.println("----------------------");
-                for (int i = 0; i < cabins.length; i++) {
-                    if (cabins[i] != null) {
-                        System.out.println(cabins[i].getCabinName() + ": ");
-                        for (int j = 0; j < cabins[i].passengers.length; j++) {
-                            if (cabins[i].passengers[j] != null) {
-                                System.out.println("\t" + cabins[i].passengers[j].getFirstName() + " " + cabins[i].passengers[j].getSurName() + ": $" + cabins[i].passengers[j].getExpenses());
+                System.out.println("------------------------------------------");
+                System.out.println("----------Expenses per passenger----------");
+
+                boolean isThereExpenses = false; // checks whether there are passengers with expenses.
+
+                for (Cabin cabin : cabins) {
+                    if (cabin != null) {
+                        System.out.println(cabin.getCabinName() + ": ");
+                        for (int j = 0; j < cabin.passengers.length; j++) {
+                            if (cabin.passengers[j] != null) {
+                                System.out.println("\t" + cabin.passengers[j].getFirstName() + " " + cabin.passengers[j].getSurName() + ": $" + cabin.passengers[j].getExpenses());
+                                isThereExpenses = true;
                             }
                         }
                     }
                 }
-                System.out.println("----------------------");
+                if (!isThereExpenses) { // if there aren't any passengers lets the user know
+                    System.out.println("There are no passengers in the ship.");
+                }
+                System.out.println("------------------------------------------");
                 System.out.println("Returning to main menu...");
                 break;
             case "t":
             case "T":
                 double totalExpenses = 0;
-                for (int i = 0; i < cabins.length; i++) {
-                    if (cabins[i] != null) {
-                        for (int j = 0; j < cabins[i].passengers.length; j++) {
-                            if (cabins[i].passengers[j] != null) {
-                                double tempExpenses = cabins[i].passengers[j].getExpenses();
+                for (Cabin cabin : cabins) {
+                    if (cabin != null) {
+                        for (int j = 0; j < cabin.passengers.length; j++) {
+                            if (cabin.passengers[j] != null) {
+                                double tempExpenses = cabin.passengers[j].getExpenses();
                                 totalExpenses += tempExpenses;
                             }
                         }
@@ -272,10 +286,13 @@ public class CruiseShipClassesWithQueue {
         }
     }
 
+    // Displays empty cabins and empty slots in cabins
     public static void displayEmptyCabins(Cabin[] cabins){
-        boolean isThere = false; // checks whether there are empty cabins or not.
         System.out.println("------------------------------------------");
-        System.out.println("--------------Empty Cabins----------------");
+        System.out.println("-----------Display Empty Cabins-----------");
+
+        boolean isThere = false; // checks whether there are empty cabins or not.
+        System.out.println("Empty Cabins (and cabin slots):");
         for (int i = 0; i < cabins.length; i++) {
             if (cabins[i] == null) {
                 System.out.println("\tCabin " + (i + 1));
@@ -296,8 +313,10 @@ public class CruiseShipClassesWithQueue {
         System.out.println("Returning to main menu...");
     }
 
+    // Takes in cabin number and slot number and removes passenger from it, if any.
     public static void deletePassengerFromCabin(Cabin[] cabins){
         System.out.println("------------------------------------------");
+        System.out.println("-----Delete a Passenger from a Cabin------");
 
         int cabinNum;
         int slotNum;
@@ -322,21 +341,28 @@ public class CruiseShipClassesWithQueue {
                         System.out.println("Removed " + cabins[cabinNum -1].passengers[slotNum-1].getFirstName() + " from " + cabins[cabinNum-1].getCabinName() + ".");
                         cabins[cabinNum -1].passengers[slotNum-1] = null;
 
-                        //deQueue
-                        if (front == -1 && rear == -1) {
-                            System.out.println("The queue is empty. No passenger was added.");
-                        } else {
-                            cabins[cabinNum - 1].passengers[slotNum - 1] = waitingListQueue[front];
-                            System.out.println("Added passenger " + cabins[cabinNum - 1].passengers[slotNum - 1].getFirstName() + " to cabin from waiting list.");
-                            if (front == rear) {
-                                front = rear = -1;
-                            } else {
-                                front = (front + 1) % 5;
-                            }
-                        }
+
 
                         if (Arrays.toString(cabins[cabinNum - 1].passengers).equals("[null, null, null]")){
                             cabins[cabinNum-1] = null;
+                            System.out.println("All passengers are cleared. The cabin is empty.");
+
+                            //deQueue
+                            if (front == -1 && rear == -1) {
+                                System.out.println("The queue is empty. No passenger was added.");
+                            } else {
+                                cabins[cabinNum - 1] = new Cabin(cabinNum, "Cabin " + cabinNum);
+                                for (int k = 0; k < 3; k++){
+                                    cabins[cabinNum - 1].passengers[slotNum - 1] = waitingListQueue[front];
+                                    System.out.println("Added passenger " + cabins[cabinNum - 1].passengers[slotNum - 1].getFirstName() + " to cabin from waiting list.");
+                                    if (front == rear) {
+                                        front = rear = -1;
+                                    } else {
+                                        front = (front + 1) % 5;
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
@@ -353,21 +379,23 @@ public class CruiseShipClassesWithQueue {
         System.out.println("------------------------------------------");
     }
 
-
+    // Takes in passenger's first name and surname and displays the cabin occupied
     public static void findCabinFromName(Cabin[] cabins){
         System.out.println("------------------------------------------");
+        System.out.println("------Find Cabin from Passenger Name------");
+
         boolean isThere = false;
         Scanner input = new Scanner(System.in);
         System.out.print("Enter passenger's first name: ");
         String inputFirstName = input.next();
-        System.out.print("Enter passenger's last name: ");
+        System.out.print("Enter passenger's surname: ");
         String inputSurName = input.next();
-        for (int i = 0; i < cabins.length; i++) {
-            if (cabins[i] != null) {
-                for (int j = 0; j < cabins[i].passengers.length; j++) {
-                    if (cabins[i].passengers[j] != null) {
-                        if ((cabins[i].passengers[j].getFirstName().equals(inputFirstName)) && (cabins[i].passengers[j].getSurName().equals(inputSurName))){
-                            System.out.println(cabins[i].passengers[j].getFirstName() + " " + cabins[i].passengers[j].getSurName() + " is in " + cabins[i].getCabinName() + ".");
+        for (Cabin cabin : cabins) {
+            if (cabin != null) {
+                for (int j = 0; j < cabin.passengers.length; j++) {
+                    if (cabin.passengers[j] != null) {
+                        if ((cabin.passengers[j].getFirstName().equals(inputFirstName)) && (cabin.passengers[j].getSurName().equals(inputSurName))) {
+                            System.out.println(cabin.passengers[j].getFirstName() + " " + cabin.passengers[j].getSurName() + " is in " + cabin.getCabinName() + ".");
                             isThere = true;
                         }
                     }
@@ -381,14 +409,17 @@ public class CruiseShipClassesWithQueue {
 
     }
 
+    // Saves cabin object data in to file.
     public static void saveDataToFile(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("-------------Save Program Data------------");
         try (FileOutputStream fos = new FileOutputStream("CruiseShipWithQueueData.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             for (int i=0; i<cabins.length;i++){
                 oos.writeObject(cabins[i]);
             }
             System.out.println("------------------------------------------");
-            System.out.println("Cruise Ship Cabin data was successfully saved.");
+            System.out.println("Cabin data was successfully saved.");
             System.out.println("------------------------------------------");
 
         } catch (IOException ex) {
@@ -397,7 +428,10 @@ public class CruiseShipClassesWithQueue {
         }
     }
 
+    // Loads data from saved data file back to Cabins[] array.
     public static void loadDataFromFile(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("------------Load Program Data-------------");
         try {
             FileInputStream fileIn = new FileInputStream("CruiseShipWithQueueData.dat");
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
@@ -407,11 +441,12 @@ public class CruiseShipClassesWithQueue {
             }
             objectIn.close();
             System.out.println("------------------------------------------");
-            System.out.println("The data has been successfully loaded from the data file.");
+            System.out.println("Cabin data has been successfully loaded.");
             System.out.println("------------------------------------------");
 
         } catch (Exception ex) {
             System.out.println("Error loading file! Check for missing file and try again.");
+            System.out.println("------------------------------------------");
             //ex.printStackTrace();
         }
     }
@@ -458,14 +493,16 @@ public class CruiseShipClassesWithQueue {
         System.out.println("----Passengers Ordered Alphabetically-----");
 
         for (String tempPassenger : tempPassengers) { // prints passengers from sorted tempPassengers array.
-            System.out.println("\t" + tempPassenger);
+            System.out.println("\t\t" + tempPassenger);
         }
         System.out.println("------------------------------------------");
-
     }
 
-    //method to fill all the cabins for easier demonstration of waiting queue.
+    // method to fill all the cabins for easier demonstration of waiting queue.
     public static void fillAllCabins(Cabin[] cabins){
+        System.out.println("------------------------------------------");
+        System.out.println("Filled all cabins with \"John Doe\"s.");
+
         for (int i = 0; i < cabins.length; i++) {
             cabins[i] = new Cabin(i, "Cabin " + i);
             for (int j = 0; j < cabins[i].passengers.length; j++) {
@@ -474,8 +511,10 @@ public class CruiseShipClassesWithQueue {
         }
     }
 
-    //method to clear all cabins.
+    // method to clear all cabins.
     public static void emptyAllCabins(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("Cleared all cabins.");
         Arrays.fill(cabins, null); // sets cabins' value back to "null".
     }
 }

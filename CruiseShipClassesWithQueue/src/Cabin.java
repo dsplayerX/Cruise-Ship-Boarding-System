@@ -4,7 +4,6 @@ import java.util.Arrays;
 public class Cabin implements Serializable {
     private String cabinName;
     private int cabinNum;
-    //private Passenger[] passengers;
     Passenger[] passengers = new Passenger[3];
 
     //Constructor

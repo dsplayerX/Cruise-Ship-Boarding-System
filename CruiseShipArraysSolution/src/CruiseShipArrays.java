@@ -79,6 +79,7 @@ public class CruiseShipArrays {
             case "q":
             case "Q":
                 isTrue = false;
+                System.out.println("Quitting the program...");
                 break;
             default:
                 System.out.println("Wrong input! Try again.");
@@ -108,6 +109,7 @@ public class CruiseShipArrays {
     // Takes cabin number and assign a passenger to it.
     public static void addPassengerToCabin(String[] cabinsRef) {
         System.out.println("------------------------------------------");
+        System.out.println("--------Add a Passenger to a Cabin--------");
         Scanner input = new Scanner(System.in);
         System.out.print("Enter cabin number (1-12) or '13' to quit:");
         try {
@@ -134,6 +136,8 @@ public class CruiseShipArrays {
      // Displays empty cabins
     public static void displayEmptyCabins(String[] cabinsRef) {
         System.out.println("------------------------------------------");
+        System.out.println("-----------Display Empty Cabins-----------");
+
         System.out.println("Empty cabins: ");
         for (int x = 0; x < cabinsRef.length; x++) {
             if (cabinsRef[x].equals("empty")) { // checks whether the cabin string is "empty"
@@ -147,14 +151,17 @@ public class CruiseShipArrays {
     // Takes cabin number and removes passenger form it
     public static void deletePassengerFromCabin(String[] cabinsRef) {
         System.out.println("------------------------------------------");
+        System.out.println("-----Delete a passenger from a cabin------");
 
         Scanner input = new Scanner(System.in);
-        System.out.print("Enter cabin number (1-12):");
+        System.out.print("Enter cabin number (1-12) or '13' to quit:");
         try {
             int cabinNum = input.nextInt();
             if (cabinNum < 13 && cabinNum > 0) {
                 cabinsRef[(cabinNum - 1)] = "empty"; // sets cabin name back to "empty"
+                System.out.println("Cabin " + cabinNum + " was cleared.");
             } else if (cabinNum == 13) {
+                System.out.println("Returning to main menu...");
                 mainMenu(cabinsRef);
             } else {
                 deletePassengerFromCabin(cabinsRef);
@@ -168,20 +175,30 @@ public class CruiseShipArrays {
 
     // Takes in passenger name and displays the cabin occupied
     public static void findCabinFromName(String[] cabinsRef) {
+        boolean cabinFound = false; // condition check to find whether there is a passenger by the given name
         System.out.println("------------------------------------------");
+        System.out.println("------Find Cabin from Passenger Name------");
+
         Scanner input = new Scanner(System.in);
         System.out.print("Enter passenger's name:");
-        String cabinName = input.next();
+        String passengerName = input.next();
         for (int x = 0; x < cabinsRef.length; x++) {
-            if (cabinsRef[x].equals(cabinName)) {
-                System.out.println("The cabin occupied by " + cabinName + " is cabin " + (x + 1) + ".");
+            if (cabinsRef[x].equals(passengerName)) {
+                System.out.println("The cabin occupied by " + passengerName + " is cabin " + (x + 1) + ".");
+                cabinFound = true;
             }
+        }
+        if (!cabinFound) {
+            System.out.println("No passenger by that name.");
         }
         System.out.println("------------------------------------------");
     }
 
     // Saves array data into a text file
     public static void storeProgramData(String[] cabinsRef) {
+        System.out.println("------------------------------------------");
+        System.out.println("-------------Save Program Data------------");
+
         try{
             FileWriter writeOut = new FileWriter("CruiseShipArrayData.txt");
 
@@ -189,7 +206,6 @@ public class CruiseShipArrays {
                 writeOut.write(s + "\r\n"); // "\r\n" to indicate the end of line
             }
             writeOut.close();
-            System.out.println("------------------------------------------");
             System.out.println("Cabin data was successfully saved.");
             System.out.println("------------------------------------------");
         } catch (IOException e) {
@@ -200,6 +216,9 @@ public class CruiseShipArrays {
 
     // Loads program data back from the saved text file.
     public static void loadProgramData(String[] cabinsRef) {
+        System.out.println("------------------------------------------");
+        System.out.println("------------Load Program Data-------------");
+
         try {
             Scanner readIn = new Scanner(new File("CruiseShipArrayData.txt"));
             while(readIn.hasNext()) {
@@ -209,7 +228,6 @@ public class CruiseShipArrays {
                 }
             }
             readIn.close();
-            System.out.println("------------------------------------------");
             System.out.println("The data has been successfully loaded from the text file.");
             System.out.println("------------------------------------------");
 
