@@ -7,7 +7,6 @@ public class Passenger implements Serializable {
 
     //Constructor
     public Passenger() {
-
     }
 
     //Constructor
@@ -16,19 +15,6 @@ public class Passenger implements Serializable {
         this.surName = surName;
         this.expenses = expenses;
 
-    }
-
-    //Setters
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setSurName(String surName) {
-        this.surName = surName;
-    }
-
-    public void setExpenses(double expenses) {
-        this.expenses = expenses;
     }
 
     //Getters
@@ -44,7 +30,8 @@ public class Passenger implements Serializable {
         return expenses;
     }
 
-
+    //To Print the Cabin Array for testing purposes
+    // This was also used to check if a whether a cabin is empty.
     @Override
     public String toString() {
         return "Passenger{" +

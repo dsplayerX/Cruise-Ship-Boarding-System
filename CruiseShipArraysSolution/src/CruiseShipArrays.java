@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -115,15 +114,19 @@ public class CruiseShipArrays {
         try {
             int cabinNum = input.nextInt();
             if (cabinNum > 0 && cabinNum < 13) {
-                System.out.print("Enter name for cabin " + cabinNum + " :");
-                String cabinName = input.next();
-                cabinsRef[(cabinNum - 1)] = cabinName; // takes the empty cabin number and assigns a name to it.
-                System.out.println("------------------------------------------");
-                System.out.println(cabinName + " was successfully added to cabin " +cabinNum+ ".");
+                if (!cabinsRef[(cabinNum - 1)].equals("empty")){
+                    System.out.println("Cabin " + cabinNum + " is already occupied.");
+                } else {
+                    System.out.print("Enter name for cabin " + cabinNum + " :");
+                    String cabinName = input.next();
+                    cabinsRef[(cabinNum - 1)] = cabinName; // takes the empty cabin number and assigns a name to it.
+                    System.out.println("------------------------------------------");
+                    System.out.println(cabinName + " was successfully added to cabin " +cabinNum+ ".");
+                }
             } else if (cabinNum == 13) { // opens main menu if 13 is entered
                 System.out.println("Returning to main menu...");
-                return;
             } else { // re-runs addPassengerToCabin() to try again
+                System.out.println("Input is out of range. Try again!");
                 addPassengerToCabin(cabinsRef);
             }
         } catch (InputMismatchException e) {

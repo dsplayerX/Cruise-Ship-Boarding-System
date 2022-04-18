@@ -185,6 +185,7 @@ public class CruiseShipClasses {
         Scanner input = new Scanner(System.in);
         System.out.print("Select option: ");
         String subOption = input.next();
+
         switch (subOption){
             case "p":
             case "P":
@@ -239,19 +240,33 @@ public class CruiseShipClasses {
     public static void displayEmptyCabins(Cabin[] cabins){
         System.out.println("------------------------------------------");
         System.out.println("-----------Display Empty Cabins-----------");
-        System.out.println("Empty Cabins: ");
+
+        boolean isThere = false; // checks whether there are empty cabins or not.
+        System.out.println("Empty Cabins (and cabin slots):");
         for (int i = 0; i < cabins.length; i++) {
             if (cabins[i] == null) {
                 System.out.println("\tCabin " + (i + 1));
+                isThere = true;
+            } else {
+                for (int j = 0; j < cabins[i].passengers.length; j++) {
+                    if (cabins[i].passengers[j] == null) {
+                        System.out.println("\tCabin " + (i + 1) + " slot " + (j+1));
+                        isThere = true;
+                    }
+                }
             }
         }
+        if (!isThere) { // if there aren't any empty cabins lets the user know
+            System.out.println("There are no empty cabins.");
+        }
         System.out.println("------------------------------------------");
-        System.out.println();
+        System.out.println("Returning to main menu...");
     }
 
     // Takes in cabin number and slot number and removes passenger from it, if any.
     public static void deletePassengerFromCabin(Cabin[] cabins){
         System.out.println("------------------------------------------");
+        System.out.println("-----Delete a Passenger from a Cabin------");
 
         int cabinNum;
         int slotNum;
@@ -303,7 +318,9 @@ public class CruiseShipClasses {
     // Takes in passenger's first name and surname and displays the cabin occupied
     public static void findCabinFromName(Cabin[] cabins){
         System.out.println("------------------------------------------");
-        boolean isThere = false;
+        System.out.println("------Find Cabin from Passenger Name------");
+
+        boolean isThere = false; // used to check whether there is a passenger from the given name
         Scanner input = new Scanner(System.in);
         System.out.print("Enter passenger's first name: ");
         String inputFirstName = input.next();
@@ -321,7 +338,7 @@ public class CruiseShipClasses {
                 }
             }
         }
-        if (!isThere){
+        if (!isThere){ // if there is no passenger by the given name, lets the user know
             System.out.println("No passenger by that name.");
         }
         System.out.println("------------------------------------------");
@@ -329,13 +346,15 @@ public class CruiseShipClasses {
 
     // Saves cabin object data in to file.
     public static void saveDataToFile(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("-------------Save Program Data------------");
         try (FileOutputStream fos = new FileOutputStream("CruiseShipClassesData.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            for (Cabin cabin : cabins) {
-                oos.writeObject(cabin);
+            for (int i=0; i<cabins.length;i++){
+                oos.writeObject(cabins[i]);
             }
             System.out.println("------------------------------------------");
-            System.out.println("Cruise Ship Cabin data was successfully saved.");
+            System.out.println("Cabin data was successfully saved.");
             System.out.println("------------------------------------------");
 
         } catch (IOException ex) {
@@ -345,6 +364,8 @@ public class CruiseShipClasses {
 
     // Loads data from saved data file back to Cabins[] array.
     public static void loadDataFromFile(Cabin[] cabins) {
+        System.out.println("------------------------------------------");
+        System.out.println("------------Load Program Data-------------");
         try {
             FileInputStream fileIn = new FileInputStream("CruiseShipClassesData.dat");
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
@@ -354,7 +375,7 @@ public class CruiseShipClasses {
             }
             objectIn.close();
             System.out.println("------------------------------------------");
-            System.out.println("The data has been successfully loaded from the data file.");
+            System.out.println("Cabin data has been successfully loaded.");
             System.out.println("------------------------------------------");
 
         } catch (Exception ex) {
@@ -373,8 +394,10 @@ public class CruiseShipClasses {
      *    > @link https://stackoverflow.com/questions/6203411/comparing-strings-by-their-alphabetical-order
      */
     public static void passengersOrdered(Cabin[] cabins){
-        ArrayList<String> tempPassengers = new ArrayList<>();
-        for (Cabin cabin : cabins) {
+
+        ArrayList<String> tempPassengers = new ArrayList<>(); // array to store passenger names, temporarily.
+
+        for (Cabin cabin : cabins) { // stores passenger's first and surnames in the temporary array.
             if (cabin != null) {
                 for (int j = 0; j < cabin.passengers.length; j++) {
                     if (cabin.passengers[j] != null) {
@@ -403,7 +426,7 @@ public class CruiseShipClasses {
         System.out.println("------------------------------------------");
         System.out.println("----Passengers Ordered Alphabetically-----");
 
-        for (String tempPassenger : tempPassengers) {
+        for (String tempPassenger : tempPassengers) { // prints passengers from sorted tempPassengers array.
             System.out.println(tempPassenger);
         }
         System.out.println("------------------------------------------");
